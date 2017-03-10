@@ -24,7 +24,7 @@ def get_data(symbols, dates):
                             parse_dates=True,usecols=['Date', 'Adj Close'], na_values='nan')
         df_sym = df_sym.rename(columns={'Adj Close': symbol})
         df = df.join(df_sym, how='inner')
-
+        df = df.iloc[::-1]  #to make the rows to be in chronological order
     return df
 
 
