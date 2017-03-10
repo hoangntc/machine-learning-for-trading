@@ -42,9 +42,8 @@ def plot_selected(df, columns, start_index, end_index):
     return plot_data(df_selected, title='Selected stock prices')
 
 def normalize_data(df):
+    """Normalize data before plotting to scale all stock prices"""
     return df/df.ix[0,:]
-
-
 
 def get_rolling_mean(values, window):
     """Return rolling mean of given values, using specified window size."""
@@ -72,9 +71,15 @@ def compute_daily_return(df):
 
 def compute_cumulative_return(df):
     daily_returns = df.copy()
-    daily_returns[1:] = (df[1:]/ df[:-1].values) - 1
+    daily_returns[1:] = (df[1:]/ df[:-1].values) - 1 #need to modify here
     daily_returns.ix[0, :] = 0
     return (df/df[0]) - 1
+
+
+def fill_missing_values(df_data):
+    """Fill missing values in data frame, in place."""
+    df_data.fillna(method='ffill', inplace=True)
+    df_data.fillna(method='bfill', inplace=True)
 
 def test_run():
     """This function shows how to use utility functions"""
@@ -123,6 +128,23 @@ def test_run_01_04():
     ax.legend(loc='upper left')
     plt.show()
 
+
+def test_run_01_05():
+    """Function called by Test Run."""
+    # Read data
+    symbol_list = ["JAVA", "FAKE1", "FAKE2"]  # list of symbols
+    start_date = "2005-12-31"
+    end_date = "2014-12-07"
+    dates = pd.date_range(start_date, end_date)  # date range as index
+    df_data = get_data(symbol_list, dates)  # get data for each symbol
+
+    # Fill missing values
+    fill_missing_values(df_data)
+
+    # Plot
+    plot_data(df_data)
+
 #if __name__ == "__main__":
 #   test_run()
-#   test_run_01_04()   
+#   test_run_01_04()
+#   test_run_01_05()   
