@@ -6,6 +6,7 @@ Note: We use date as index to access rows of dataframe
 
 import os
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def symbol_to_path(symbol, base_dir="data"):
     """Return CSV file path given ticker symbol."""
