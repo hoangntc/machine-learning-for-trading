@@ -26,8 +26,25 @@ def get_data(symbols, dates):
 
     return df
 
+
+def plot_data(df, title="Stock prices"):
+    """Plot stock prices with a custom title and meaningful axis labels."""
+    ax = df.plot(title=title, fontsize=12)
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Price")
+    plt.show()
+
+
+def plot_selected(df, columns, start_index, end_index):
+    """Plot the desired columns over index values in the given range."""
+    df_selected = df.ix[start_index: end_index, columns]
+    return plot_data(df_selected, title='Selected stock prices')
+
+def normalize_data(df):
+    return df/df.ix[0,:]
+
 def test_run():
-    """This function shows how to use get_data function"""
+    """This function shows how to use utility functions"""
     # Define a date range
     dates = pd.date_range('2010-01-22', '2010-01-26')
 
@@ -45,6 +62,10 @@ def test_run():
     print(df[['SPY', 'IBM']])
     # Slice by row and column
     print(df.ix['2010-01-22': '2010-01-24', ['SPY', 'IBM']])
+
+    # Slice and plot
+    plot_selected(df, ['SPY', 'IBM'], '2010-03-01', '2010-04-01')
+
 
 #if __name__ == "__main__":
 #    test_run()
