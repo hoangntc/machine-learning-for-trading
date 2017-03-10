@@ -44,6 +44,38 @@ def plot_selected(df, columns, start_index, end_index):
 def normalize_data(df):
     return df/df.ix[0,:]
 
+
+
+def get_rolling_mean(values, window):
+    """Return rolling mean of given values, using specified window size."""
+    return values.rolling(window=window, center=False).mean()
+
+
+def get_rolling_std(values, window):
+    """Return rolling standard deviation of given values, using specified window size."""
+    return values.rolling(window=window, center=False).std()
+
+
+def get_bollinger_bands(rm, rstd):
+    """Return upper and lower Bollinger Bands."""
+    upper_band = rm + rstd*2
+    lower_band = rm - rstd*2
+    return upper_band, lower_band
+
+def compute_daily_return(df):
+    #return (df/df.shift(1)) - 1
+    daily_returns = df.copy()
+    daily_returns[1:] = (df[1:]/ df[:-1].values) - 1
+    daily_returns.ix[0, :] = 0
+    return daily_returns
+
+
+def compute_cumulative_return(df):
+    daily_returns = df.copy()
+    daily_returns[1:] = (df[1:]/ df[:-1].values) - 1
+    daily_returns.ix[0, :] = 0
+    return (df/df[0]) - 1
+
 def test_run():
     """This function shows how to use utility functions"""
     # Define a date range
@@ -68,5 +100,29 @@ def test_run():
     plot_selected(df, ['SPY', 'IBM'], '2010-03-01', '2010-04-01')
 
 
+def test_run_01_04():
+    # Compute Bollinger Bands
+    # 1. Compute rolling mean
+    rm_SPY = get_rolling_mean(df['SPY'], window=20)
+
+    # 2. Compute rolling standard deviation
+    rstd_SPY = get_rolling_std(df['SPY'], window=20)
+
+    # 3. Compute upper and lower bands
+    upper_band, lower_band = get_bollinger_bands(rm_SPY, rstd_SPY)
+    
+    # Plot raw SPY values, rolling mean and Bollinger Bands
+    ax = df['SPY'].plot(title="Bollinger Bands", label='SPY')
+    rm_SPY.plot(label='Rolling mean', ax=ax)
+    upper_band.plot(label='upper band', ax=ax)
+    lower_band.plot(label='lower band', ax=ax)
+
+    # Add axis labels and legend
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Price")
+    ax.legend(loc='upper left')
+    plt.show()
+
 #if __name__ == "__main__":
-#    test_run()
+#   test_run()
+#   test_run_01_04()   
